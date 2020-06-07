@@ -62,7 +62,7 @@ func (g *groupBls) RandomStream() cipher.Stream {
 func NewGroupG1() kyber.Group {
 	return &groupBls{
 		str:      "bls12-381.G1",
-		newPoint: func() kyber.Point { return nullKyberG1() },
+		newPoint: func() kyber.Point { return NullKyberG1() },
 		isPrime:  true,
 	}
 }
@@ -70,7 +70,7 @@ func NewGroupG1() kyber.Group {
 func NewGroupG2() kyber.Group {
 	return &groupBls{
 		str:      "bls12-381.G2",
-		newPoint: func() kyber.Point { return nullKyberG2() },
+		newPoint: func() kyber.Point { return NullKyberG2() },
 		isPrime:  false,
 	}
 }

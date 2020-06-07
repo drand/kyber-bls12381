@@ -15,7 +15,7 @@ type KyberG1 struct {
 	p *bls12381.PointG1
 }
 
-func nullKyberG1() *KyberG1 {
+func NullKyberG1() *KyberG1 {
 	var p bls12381.PointG1
 	return newKyberG1(&p)
 }
@@ -87,7 +87,7 @@ func (k *KyberG1) Neg(a kyber.Point) kyber.Point {
 
 func (k *KyberG1) Mul(s kyber.Scalar, q kyber.Point) kyber.Point {
 	if q == nil {
-		q = nullKyberG1().Base()
+		q = NullKyberG1().Base()
 	}
 	bls12381.NewG1().MulScalar(k.p, q.(*KyberG1).p, &s.(*mod.Int).V)
 	return k

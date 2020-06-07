@@ -20,7 +20,7 @@ type KyberG2 struct {
 	p *bls12381.PointG2
 }
 
-func nullKyberG2() *KyberG2 {
+func NullKyberG2() *KyberG2 {
 	var p bls12381.PointG2
 	return newKyberG2(&p)
 }
@@ -92,7 +92,7 @@ func (k *KyberG2) Neg(a kyber.Point) kyber.Point {
 
 func (k *KyberG2) Mul(s kyber.Scalar, q kyber.Point) kyber.Point {
 	if q == nil {
-		q = nullKyberG2().Base()
+		q = NullKyberG2().Base()
 	}
 	bls12381.NewG2().MulScalar(k.p, q.(*KyberG2).p, &s.(*mod.Int).V)
 	return k
