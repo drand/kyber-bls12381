@@ -9,7 +9,7 @@ import (
 	mrand "math/rand"
 	"os"
 
-	bls "github.com/drand/bls12381"
+	bls "github.com/drand/kyber-bls12381"
 	"github.com/drand/kyber/group/mod"
 	sig "github.com/drand/kyber/sign/bls"
 	"github.com/drand/kyber/util/random"
@@ -48,16 +48,11 @@ func main() {
 	}
 	tvs = fill(tvs)
 	for _, tv := range tvs {
-		g1, err := bls.NewG1().HashToCurve([]byte(tv.msg), []byte(tv.cipher))
-		if err != nil {
-			panic(err)
-		}
-		g1Buff := bls.NewG1().ToCompressed(g1)
-		g2, err := bls.NewG2(nil).HashToCurve([]byte(tv.msg), []byte(tv.cipher))
-		if err != nil {
-			panic(err)
-		}
-		g2Buff := bls.NewG2(nil).ToCompressed(g2)
+		bls.Domain = []byte(tv.cipher)
+		g1 := bls.NullKyberG1().Hash([]byte(tv.msg))
+		g1Buff, _ := g1.MarshalBinary()
+		g2 := bls.NullKyberG2().Hash([]byte(tv.msg))
+		g2Buff, _ := g2.MarshalBinary()
 		s := toWrite{
 			Msg:          tv.msg,
 			Ciphersuite:  tv.cipher,
