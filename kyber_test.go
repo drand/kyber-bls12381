@@ -311,3 +311,12 @@ func TestKyberThresholdG1(t *testing.T) {
 	tscheme := tbls.NewThresholdSchemeOnG2(suite)
 	test.ThresholdTest(t, suite.G1(), tscheme)
 }
+
+func TestIsValidGroup(t *testing.T) {
+	suite := NewBLS12381Suite()
+	p1 := suite.G1().Point().Pick(random.New())
+	p2 := suite.G1().Point().Pick(random.New())
+
+	require.True(t, p1.(GroupChecker).IsInCorrectGroup())
+	require.True(t, p2.(GroupChecker).IsInCorrectGroup())
+}

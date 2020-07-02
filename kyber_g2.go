@@ -145,3 +145,7 @@ func sha256Hash(in []byte) []byte {
 	h.Write(in)
 	return h.Sum(nil)
 }
+
+func (k *KyberG2) IsInCorrectGroup() bool {
+	return bls12381.NewG2().InCorrectSubgroup(k.p)
+}
