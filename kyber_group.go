@@ -14,6 +14,15 @@ import (
 	bls12381 "github.com/kilic/bls12-381"
 )
 
+// GroupChecker allows to verify if a Point is in the correct group or not. For
+// curves which don't have a prime order, we need to only consider the points
+// lying in the subgroup of prime order. That check returns true if the point is
+// correct or not.
+type GroupChecker interface {
+	kyber.Point
+	IsInCorrectGroup() bool
+}
+
 type groupBls struct {
 	str      string
 	newPoint func() kyber.Point

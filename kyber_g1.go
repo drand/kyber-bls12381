@@ -135,3 +135,7 @@ func (k *KyberG1) Hash(m []byte) kyber.Point {
 	return k
 
 }
+
+func (k *KyberG1) IsInCorrectGroup() bool {
+	return bls12381.NewG1().InCorrectSubgroup(k.p)
+}
