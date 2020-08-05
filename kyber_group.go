@@ -111,6 +111,13 @@ func (s *Suite) GT() kyber.Group {
 	return NewGroupGT()
 }
 
+func (s *Suite) ValidatePairing(p1, p2, p3, p4 kyber.Point) bool {
+	e := bls12381.NewEngine()
+	e.AddPair(p1.(*KyberG1).p, p2.(*KyberG2).p)
+	e.AddPairInv(p3.(*KyberG1).p, p4.(*KyberG2).p)
+	return e.Check()
+}
+
 func (s *Suite) Pair(p1, p2 kyber.Point) kyber.Point {
 	e := bls12381.NewEngine()
 	g1point := p1.(*KyberG1).p

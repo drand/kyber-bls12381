@@ -270,7 +270,7 @@ func TestKyberG2(t *testing.T) {
 }
 
 func TestKyberPairingG2(t *testing.T) {
-	s := NewBLS12381Suite()
+	s := NewBLS12381Suite().(*Suite)
 	a := s.G1().Scalar().Pick(s.RandomStream())
 	b := s.G2().Scalar().Pick(s.RandomStream())
 	aG := s.G1().Point().Mul(a, nil)
@@ -282,10 +282,49 @@ func TestKyberPairingG2(t *testing.T) {
 	// e((ab)G,H) = e(G,H)^(ab)
 	p2 := s.Pair(abG, s.G2().Point().Base())
 	require.True(t, p1.Equal(p2))
+	require.True(t, s.ValidatePairing(aG, bH, abG.Clone(), s.G2().Point().Base()))
+
 	pRandom := s.Pair(aG, s.G2().Point().Pick(s.RandomStream()))
 	require.False(t, p1.Equal(pRandom))
 	pRandom = s.Pair(s.G1().Point().Pick(s.RandomStream()), bH)
 	require.False(t, p1.Equal(pRandom))
+}
+
+func BenchmarkPairingSeparate(bb *testing.B) {
+	s := NewBLS12381Suite().(*Suite)
+	a := s.G1().Scalar().Pick(s.RandomStream())
+	b := s.G2().Scalar().Pick(s.RandomStream())
+	aG := s.G1().Point().Mul(a, nil)
+	bH := s.G2().Point().Mul(b, nil)
+	ab := s.G1().Scalar().Mul(a, b)
+	abG := s.G1().Point().Mul(ab, nil)
+	bb.ResetTimer()
+	for i := 0; i < bb.N; i++ {
+
+		// e(aG, bG) = e(G,H)^(ab)
+		p1 := s.Pair(aG, bH)
+		// e((ab)G,H) = e(G,H)^(ab)
+		p2 := s.Pair(abG, s.G2().Point().Base())
+		if !p1.Equal(p2) {
+			panic("aie")
+		}
+	}
+}
+
+func BenchmarkPairingInv(bb *testing.B) {
+	s := NewBLS12381Suite().(*Suite)
+	a := s.G1().Scalar().Pick(s.RandomStream())
+	b := s.G2().Scalar().Pick(s.RandomStream())
+	aG := s.G1().Point().Mul(a, nil)
+	bH := s.G2().Point().Mul(b, nil)
+	ab := s.G1().Scalar().Mul(a, b)
+	abG := s.G1().Point().Mul(ab, nil)
+	bb.ResetTimer()
+	for i := 0; i < bb.N; i++ {
+		if !s.ValidatePairing(aG, bH, abG.Clone(), s.G2().Point().Base()) {
+			panic("aie")
+		}
+	}
 }
 
 func TestKyberBLSG2(t *testing.T) {
