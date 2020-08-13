@@ -93,10 +93,11 @@ func NewGroupGT() kyber.Group {
 }
 
 type Suite struct {
+	e *bls12381.Engine
 }
 
 func NewBLS12381Suite() pairing.Suite {
-	return &Suite{}
+	return &Suite{e: bls12381.NewEngine()}
 }
 
 func (s *Suite) G1() kyber.Group {
@@ -111,11 +112,17 @@ func (s *Suite) GT() kyber.Group {
 	return NewGroupGT()
 }
 
+// ValidatePairing implements the `pairing.Suite` interface
+func (s *Suite) ValidatePairing(p1, p2, p3, p4 kyber.Point) bool {
+	s.e.AddPair(p1.(*KyberG1).p, p2.(*KyberG2).p)
+	s.e.AddPairInv(p3.(*KyberG1).p, p4.(*KyberG2).p)
+	return s.e.Check()
+}
+
 func (s *Suite) Pair(p1, p2 kyber.Point) kyber.Point {
-	e := bls12381.NewEngine()
 	g1point := p1.(*KyberG1).p
 	g2point := p2.(*KyberG2).p
-	gt := newKyberGT(e.AddPair(g1point, g2point).Result())
+	gt := newKyberGT(s.e.AddPair(g1point, g2point).Result())
 	return gt
 }
 
