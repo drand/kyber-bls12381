@@ -360,20 +360,22 @@ func TestIsValidGroup(t *testing.T) {
 	require.True(t, p2.(GroupChecker).IsInCorrectGroup())
 }
 
+var suite = NewBLS12381Suite()
+
+func NewElement() kyber.Scalar {
+	return suite.G1().Scalar()
+}
+func NewG1() kyber.Point {
+	return suite.G1().Point().Base()
+}
+func NewG2() kyber.Point {
+	return suite.G2().Point().Base()
+}
+func Pair(a, b kyber.Point) kyber.Point {
+	return suite.Pair(a, b)
+}
 func TestBasicPairing(t *testing.T) {
-	suite := NewBLS12381Suite()
-	NewElement := func() kyber.Scalar {
-		return suite.G1().Scalar()
-	}
-	NewG1 := func() kyber.Point {
-		return suite.G1().Point()
-	}
-	NewG2 := func() kyber.Point {
-		return suite.G2().Point()
-	}
-	Pair := func(a, b kyber.Point) kyber.Point {
-		return suite.Pair(a, b)
-	}
+
 	// we test a * b = c + d
 	a := NewElement().Pick(random.New())
 	b := NewElement().Pick(random.New())
@@ -397,7 +399,34 @@ func TestBasicPairing(t *testing.T) {
 	right1 := Pair(cG, NewG2())
 	dG := NewG2().Mul(d, nil)
 	right2 := Pair(NewG1(), dG)
-	right := right1.Add(right1, right2)
+	right := suite.GT().Point().Add(right1, right2)
 
 	require.True(t, left.Equal(right))
+}
+
+func TestBasicPairing2(t *testing.T) {
+	// we test a * b = c * d
+	a := NewElement().Pick(random.New())
+	b := NewElement().Pick(random.New())
+	c := NewElement().Pick(random.New())
+	d := NewElement().Div(NewElement().Mul(a, b), c)
+
+	// check in the clear
+	ab := NewElement().Mul(a, b)
+	cd := NewElement().Mul(c, d)
+	require.True(t, ab.Equal(cd))
+
+	// check in the exponent now with the following
+	// e(aG1,bG2) = e(cG1,dG2) <=>
+	// e(G1,G2)^(a*b) = e(G1,G2)^(c * d)
+	aG := NewG1().Mul(a, nil)
+	bG := NewG2().Mul(b, nil)
+	left := Pair(aG, bG)
+
+	cG := NewG1().Mul(c, nil)
+	dG := NewG2().Mul(d, nil)
+	right := Pair(cG, dG)
+
+	require.True(t, left.Equal(right))
+
 }
