@@ -6,10 +6,12 @@ import (
 	"testing"
 
 	"github.com/drand/kyber"
+	"github.com/drand/kyber/group/mod"
 	"github.com/drand/kyber/sign/bls"
 	"github.com/drand/kyber/sign/tbls"
 	"github.com/drand/kyber/sign/test"
 	"github.com/drand/kyber/util/random"
+	bls12381 "github.com/kilic/bls12-381"
 	"github.com/stretchr/testify/require"
 )
 
@@ -426,6 +428,49 @@ func TestBasicPairing2(t *testing.T) {
 	cG := NewG1().Mul(c, nil)
 	dG := NewG2().Mul(d, nil)
 	right := Pair(cG, dG)
+
+	require.True(t, left.Equal(right))
+
+}
+
+func TestBasicPairingNative(t *testing.T) {
+
+	g1 := bls12381.NewG1()
+	g2 := bls12381.NewG2()
+	gt := bls12381.NewGT()
+	e := func() *bls12381.Engine {
+		return bls12381.NewEngine()
+	}
+
+	// we test a * b = c + d
+	a := NewElement().Pick(random.New()).(*mod.Int)
+	b := NewElement().Pick(random.New()).(*mod.Int)
+	c := NewElement().Pick(random.New()).(*mod.Int)
+	d := NewElement().Sub(NewElement().Mul(a, b), c).(*mod.Int)
+
+	// check in the clear
+	ab := NewElement().Mul(a, b).(*mod.Int)
+	cd := NewElement().Add(c, d).(*mod.Int)
+	require.True(t, ab.Equal(cd))
+
+	// check in the exponent now with the following
+	// e(aG1,bG2) = e(cG1,G2) * e(G1,dG2) <=>
+	// e(G1,G2)^(a*b) = e(G1,G2)^c * e(G1,G2)^d
+	// e(G1,G2)^(a*b) = e(G1,G2)^(c + d)
+	aG := g1.One()
+	g1.MulScalar(aG, aG, &a.V)
+	bG := g2.One()
+	g2.MulScalar(bG, bG, &b.V)
+	left := e().AddPair(aG, bG).Result()
+
+	cG := g1.One()
+	g1.MulScalar(cG, cG, &c.V)
+	right1 := e().AddPair(cG, g2.One()).Result()
+	dG := g2.One()
+	g2.MulScalar(dG, dG, &d.V)
+	right2 := e().AddPair(g1.One(), dG).Result()
+	right := gt.New()
+	gt.Add(right, right1, right2)
 
 	require.True(t, left.Equal(right))
 
