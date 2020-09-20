@@ -62,7 +62,7 @@ func (k *KyberGT) Clone() kyber.Point {
 func (k *KyberGT) Add(a, b kyber.Point) kyber.Point {
 	aa := a.(*KyberGT)
 	bb := b.(*KyberGT)
-	bls12381.NewGT().Add(k.f, aa.f, bb.f)
+	bls12381.NewGT().Mul(k.f, aa.f, bb.f)
 	return k
 }
 
