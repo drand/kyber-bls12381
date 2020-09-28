@@ -10,6 +10,8 @@ github.com/drand/kyber v1.0.2/go.mod h1:x6KOpK7avKj0GJ4emhXFP5n7M7W7ChAPmnQh/OL6
 github.com/jonboulle/clockwork v0.1.0/go.mod h1:Ii8DK3G1RaLaWxj9trq07+26W01tbo22gdxWY5EU2bo=
 github.com/kilic/bls12-381 v0.0.0-20200607163746-32e1441c8a9f h1:qET3Wx0v8tMtoTOQnsJXVvqvCopSf48qobR6tcJuDHo=
 github.com/kilic/bls12-381 v0.0.0-20200607163746-32e1441c8a9f/go.mod h1:XXfR6YFCRSrkEXbNlIyDsgXVNJWVUV30m/ebkVy9n6s=
+github.com/kilic/bls12-381 v0.0.0-20200731194930-64c428e1bff5 h1:RAGCvOaqSiey3BGHopL/JI6+baO7D7AYQVDb6I8pRTs=
+github.com/kilic/bls12-381 v0.0.0-20200731194930-64c428e1bff5/go.mod h1:XXfR6YFCRSrkEXbNlIyDsgXVNJWVUV30m/ebkVy9n6s=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
