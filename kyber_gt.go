@@ -69,7 +69,8 @@ func (k *KyberGT) Add(a, b kyber.Point) kyber.Point {
 }
 
 func (k *KyberGT) Sub(a, b kyber.Point) kyber.Point {
-	panic("not available")
+	nb := newEmptyGT().Neg(b)
+	return newEmptyGT().Add(a, nb)
 }
 
 func (k *KyberGT) Neg(q kyber.Point) kyber.Point {
