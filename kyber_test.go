@@ -402,8 +402,15 @@ func TestBasicPairing(t *testing.T) {
 	right := suite.GT().Point().Add(right1, right2)
 	require.True(t, left.Equal(right))
 
+	// Test if addition works in GT
 	mright := right.Clone().Neg(right)
 	res := mright.Add(mright, right)
 	require.True(t, res.Equal(suite.GT().Point().Null()))
 
+	//  Test if scalar mul works in GT
+	// e(aG,G) == e(G,G)^a
+	left = Pair(aG, suite.G2().Point().Base())
+	right = Pair(suite.G1().Point().Base(), suite.G2().Point().Base())
+	right = right.Mul(a, right)
+	require.True(t, left.Equal(right))
 }
