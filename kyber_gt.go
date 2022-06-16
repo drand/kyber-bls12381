@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/drand/kyber"
+	"github.com/drand/kyber/group/mod"
 	bls12381 "github.com/kilic/bls12-381"
 )
 
@@ -29,8 +30,9 @@ func (k *KyberGT) Equal(kk kyber.Point) bool {
 const gtLength = 576
 
 func (k *KyberGT) Null() kyber.Point {
-	var zero [gtLength]byte
-	k.f, _ = bls12381.NewGT().FromBytes(zero[:])
+	// One since we deal with Gt elements as a multiplicative group only
+	// i.e. Add in kyber -> mul in kilic/, Neg in kyber -> inverse in kilic/ etc
+	k.f = bls12381.NewGT().New()
 	return k
 }
 
@@ -67,18 +69,21 @@ func (k *KyberGT) Add(a, b kyber.Point) kyber.Point {
 }
 
 func (k *KyberGT) Sub(a, b kyber.Point) kyber.Point {
-	aa := a.(*KyberGT)
-	bb := b.(*KyberGT)
-	bls12381.NewGT().Sub(k.f, aa.f, bb.f)
-	return k
+	nb := newEmptyGT().Neg(b)
+	return newEmptyGT().Add(a, nb)
 }
 
 func (k *KyberGT) Neg(q kyber.Point) kyber.Point {
-	panic("bls12-381: GT is not a full kyber.Point implementation")
+	qq := q.(*KyberGT)
+	bls12381.NewGT().Inverse(k.f, qq.f)
+	return k
 }
 
 func (k *KyberGT) Mul(s kyber.Scalar, q kyber.Point) kyber.Point {
-	panic("bls12-381: GT is not a full kyber.Point implementation")
+	v := s.(*mod.Int).V
+	qq := q.(*KyberGT)
+	bls12381.NewGT().Exp(k.f, qq.f, &v)
+	return k
 }
 
 func (k *KyberGT) MarshalBinary() ([]byte, error) {
