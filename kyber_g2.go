@@ -94,7 +94,7 @@ func (k *KyberG2) Mul(s kyber.Scalar, q kyber.Point) kyber.Point {
 	if q == nil {
 		q = NullKyberG2().Base()
 	}
-	bls12381.NewG2().MulScalar(k.p, q.(*KyberG2).p, &s.(*mod.Int).V)
+	bls12381.NewG2().MulScalarBig(k.p, q.(*KyberG2).p, &s.(*mod.Int).V)
 	return k
 }
 
