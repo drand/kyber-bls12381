@@ -19,9 +19,9 @@ func NewKyberScalar() kyber.Scalar {
 }
 
 func (s *Scalar) Hash(h kyber.HashFactory, msg []byte) kyber.Scalar {
-	byteLen := s.Int.MarshalSize()
-	bitLen := s.Int.V.BitLen()
-	toMask := byteLen - bitLen
+	canonicalBitLen := s.Int.MarshalSize() * 8
+	actualBitLen := s.Int.V.BitLen()
+	toMask := canonicalBitLen - actualBitLen
 	var fullMask byte = 0xff
 	var mask byte = 0
 	for toMask > 0 {
@@ -43,7 +43,7 @@ func (s *Scalar) Hash(h kyber.HashFactory, msg []byte) kyber.Scalar {
 		if err := s.UnmarshalBinary(buff); err == nil {
 			return s
 		} else {
-			fmt.Println("bitLen: ", bitLen, " byteLen:", byteLen, " error: ", err)
+			fmt.Println("canonicalBitLen: ", canonicalBitLen, " actual bit len:", actualBitLen, " error: ", err)
 		}
 	}
 }
