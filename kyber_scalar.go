@@ -1,7 +1,6 @@
 package bls
 
 import (
-	"fmt"
 	"math/big"
 
 	"github.com/drand/kyber"
@@ -20,7 +19,7 @@ func NewKyberScalar() kyber.Scalar {
 
 func (s *Scalar) Hash(h kyber.HashFactory, msg []byte) kyber.Scalar {
 	canonicalBitLen := s.Int.MarshalSize() * 8
-	actualBitLen := s.Int.V.BitLen()
+	actualBitLen := s.Int.M.BitLen()
 	toMask := canonicalBitLen - actualBitLen
 	buff := msg
 	for {
@@ -34,8 +33,6 @@ func (s *Scalar) Hash(h kyber.HashFactory, msg []byte) kyber.Scalar {
 		}
 		if err := s.UnmarshalBinary(buff); err == nil {
 			return s
-		} else {
-			fmt.Println("canonicalBitLen: ", canonicalBitLen, " actual bit len:", actualBitLen, " error: ", err)
 		}
 	}
 }

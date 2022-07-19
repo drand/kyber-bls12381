@@ -1,9 +1,12 @@
 package bls
 
 import (
+	"crypto/rand"
 	"testing"
 )
 
 func TestScalarHash(t *testing.T) {
-	NewKyberScalar().(*Scalar).Hash(suite, []byte("HelloWorld"))
+	token := make([]byte, 32)
+	rand.Read(token)
+	NewKyberScalar().(*Scalar).Hash(suite, token)
 }
