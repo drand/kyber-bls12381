@@ -117,7 +117,7 @@ func (s *Suite) ValidatePairing(p1, p2, p3, p4 kyber.Point) bool {
 	// in order to avoid risks of race conditions.
 	g1point := new(bls12381.PointG1).Set(p1.(*KyberG1).p)
 	g2point := new(bls12381.PointG2).Set(p2.(*KyberG2).p)
-	g1point2 := new(bls12381.PointG1).Set(p3.(*KyberG1).p)
+	g1point2 := p3.(*KyberG1).p
 	g2point2 := new(bls12381.PointG2).Set(p4.(*KyberG2).p)
 	e.AddPair(g1point, g2point)
 	e.AddPairInv(g1point2, g2point2)
@@ -126,10 +126,8 @@ func (s *Suite) ValidatePairing(p1, p2, p3, p4 kyber.Point) bool {
 
 func (s *Suite) Pair(p1, p2 kyber.Point) kyber.Point {
 	e := bls12381.NewEngine()
-	// we need to clone the point because of https://github.com/kilic/bls12-381/issues/37
-	// in order to avoid risks of race conditions.
-	g1point := new(bls12381.PointG1).Set(p1.(*KyberG1).p)
-	g2point := new(bls12381.PointG2).Set(p2.(*KyberG2).p)
+	g1point := p1.(*KyberG1).p
+	g2point := p2.(*KyberG2).p
 	return newKyberGT(e.AddPair(g1point, g2point).Result())
 }
 

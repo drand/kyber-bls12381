@@ -66,20 +66,16 @@ func (k *KyberG1) Data() ([]byte, error) {
 }
 
 func (k *KyberG1) Add(a, b kyber.Point) kyber.Point {
-	// we need to clone the point because of https://github.com/kilic/bls12-381/issues/37
-	// in order to avoid risks of race conditions.
-	aa := new(bls12381.PointG1).Set(a.(*KyberG1).p)
-	bb := new(bls12381.PointG1).Set(b.(*KyberG1).p)
-	bls12381.NewG1().Add(k.p, aa, bb)
+	aa := a.(*KyberG1)
+	bb := b.(*KyberG1)
+	bls12381.NewG1().Add(k.p, aa.p, bb.p)
 	return k
 }
 
 func (k *KyberG1) Sub(a, b kyber.Point) kyber.Point {
-	// we need to clone the point because of https://github.com/kilic/bls12-381/issues/37
-	// in order to avoid risks of race conditions.
-	aa := new(bls12381.PointG1).Set(a.(*KyberG1).p)
-	bb := new(bls12381.PointG1).Set(b.(*KyberG1).p)
-	bls12381.NewG1().Sub(k.p, aa, bb)
+	aa := a.(*KyberG1)
+	bb := b.(*KyberG1)
+	bls12381.NewG1().Sub(k.p, aa.p, bb.p)
 	return k
 }
 
