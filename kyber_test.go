@@ -3,6 +3,7 @@ package bls
 import (
 	"bytes"
 	"crypto/cipher"
+	"sync"
 	"testing"
 
 	"github.com/drand/kyber"
@@ -288,6 +289,24 @@ func TestKyberPairingG2(t *testing.T) {
 	require.False(t, p1.Equal(pRandom))
 	pRandom = s.Pair(s.G1().Point().Pick(s.RandomStream()), bH)
 	require.False(t, p1.Equal(pRandom))
+}
+
+func TestRacePairings(t *testing.T) {
+	s := NewBLS12381Suite().(*Suite)
+	a := s.G1().Scalar().Pick(s.RandomStream())
+	aG := s.G1().Point().Mul(a, nil)
+	B := s.G2().Point().Pick(s.RandomStream())
+	aB := s.G2().Point().Mul(a, B.Clone())
+	wg := sync.WaitGroup{}
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			//  e(p1,p2) =?= e(inv1^-1, inv2^-1)
+			s.ValidatePairing(aG, B, s.G1().Point(), aB)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
 }
 
 func BenchmarkPairingSeparate(bb *testing.B) {
