@@ -94,7 +94,10 @@ func (k *KyberG1) Mul(s kyber.Scalar, q kyber.Point) kyber.Point {
 }
 
 func (k *KyberG1) MarshalBinary() ([]byte, error) {
-	return bls12381.NewG1().ToCompressed(k.p), nil
+	// we need to clone the point because of https://github.com/kilic/bls12-381/issues/37
+	// in order to avoid risks of race conditions.
+	t := new(bls12381.PointG1).Set(k.p)
+	return bls12381.NewG1().ToCompressed(t), nil
 }
 
 func (k *KyberG1) UnmarshalBinary(buff []byte) error {

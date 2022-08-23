@@ -1,5 +1,3 @@
-[![CircleCI](https://circleci.com/gh/drand/kyber-bls12381/tree/master.svg?style=shield)](https://circleci.com/gh/drand/drand/tree/master)
-
 # kyber-bls12381
 
 Kyber wrapper around [kilic/bls12381](https://github.com/kilic/bls12-381) library.
