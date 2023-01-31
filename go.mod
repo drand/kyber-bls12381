@@ -1,6 +1,6 @@
 module github.com/drand/kyber-bls12381
 
-go 1.19
+go 1.18
 
 require (
 	github.com/drand/kyber v1.1.17
