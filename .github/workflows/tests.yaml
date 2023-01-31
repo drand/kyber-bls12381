@@ -2,10 +2,9 @@ name: "Tests"
 on:
   push:
     branches:
-      - master
       - main
-    tags:
-    pull_request:
+      - master
+  pull_request:
 
 concurrency:
   group: ci-${{ github.ref }}-tests
@@ -16,7 +15,7 @@ jobs:
       runs-on: ubuntu-latest
       strategy:
         matrix:
-          go: [  '1.19', '1.18',  '1.17',  '1.16',  '1.15', '1.14' ]
+          go: [  '1.19', '1.18' ]
       name: Go ${{ matrix.go }} sample
       steps:
         - uses: actions/checkout@v3
