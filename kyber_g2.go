@@ -134,7 +134,7 @@ func (k *KyberG2) MarshalSize() int {
 
 func (k *KyberG2) String() string {
 	b, _ := k.MarshalBinary()
-	return "bls12-381.G1: " + hex.EncodeToString(b)
+	return "bls12-381.G2: " + hex.EncodeToString(b)
 }
 
 func (k *KyberG2) Hash(m []byte) kyber.Point {
