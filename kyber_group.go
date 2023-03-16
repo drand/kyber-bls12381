@@ -57,7 +57,7 @@ func (g *groupBls) Hash() hash.Hash {
 	return sha256.New()
 }
 
-// XOF returns a newlly instantiated blake2xb XOF function.
+// XOF returns a newly instantiated blake2xb XOF function.
 func (g *groupBls) XOF(seed []byte) kyber.XOF {
 	return blake2xb.New(seed)
 }
