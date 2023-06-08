@@ -30,9 +30,9 @@ type KyberG1 struct {
 
 func NullKyberG1(dst []byte) *KyberG1 {
 	var p bls12381.PointG1
-	return newKyberG1(&p, dst...)
+	return newKyberG1(&p, dst)
 }
-func newKyberG1(p *bls12381.PointG1, dst ...byte) *KyberG1 {
+func newKyberG1(p *bls12381.PointG1, dst []byte) *KyberG1 {
 	return &KyberG1{p: p, dst: dst}
 }
 
@@ -45,11 +45,11 @@ func (k *KyberG1) Equal(k2 kyber.Point) bool {
 }
 
 func (k *KyberG1) Null() kyber.Point {
-	return newKyberG1(bls12381.NewG1().Zero(), k.dst...)
+	return newKyberG1(bls12381.NewG1().Zero(), k.dst)
 }
 
 func (k *KyberG1) Base() kyber.Point {
-	return newKyberG1(bls12381.NewG1().One(), k.dst...)
+	return newKyberG1(bls12381.NewG1().One(), k.dst)
 }
 
 func (k *KyberG1) Pick(rand cipher.Stream) kyber.Point {
@@ -66,7 +66,7 @@ func (k *KyberG1) Set(q kyber.Point) kyber.Point {
 func (k *KyberG1) Clone() kyber.Point {
 	var p bls12381.PointG1
 	p.Set(k.p)
-	return newKyberG1(&p, k.dst...)
+	return newKyberG1(&p, k.dst)
 }
 
 func (k *KyberG1) EmbedLen() int {
