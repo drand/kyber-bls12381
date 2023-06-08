@@ -27,8 +27,6 @@ func (k *KyberGT) Equal(kk kyber.Point) bool {
 	return k.f.Equal(kk.(*KyberGT).f)
 }
 
-const gtLength = 576
-
 func (k *KyberGT) Null() kyber.Point {
 	// One since we deal with Gt elements as a multiplicative group only
 	// i.e. Add in kyber -> mul in kilic/, Neg in kyber -> inverse in kilic/ etc
@@ -37,17 +35,11 @@ func (k *KyberGT) Null() kyber.Point {
 }
 
 func (k *KyberGT) Base() kyber.Point {
-	panic("not yet available")
-	/*var baseReader, _ = blake2b.NewXOF(0, []byte("Quand il y a à manger pour huit, il y en a bien pour dix."))*/
-	//_, err := NewGT().rand(baseReader)
-	//if err != nil {
-	//panic(err)
-	//}
-	/*return k*/
+	panic("bls12-381.GT.Base(): unsupported operation")
 }
 
 func (k *KyberGT) Pick(rand cipher.Stream) kyber.Point {
-	panic("TODO: bls12-381.GT.Pick()")
+	panic("bls12-381.GT.Pick(): unsupported operation")
 }
 
 func (k *KyberGT) Set(q kyber.Point) kyber.Point {

@@ -68,18 +68,18 @@ func (g *groupBls) RandomStream() cipher.Stream {
 	return random.New()
 }
 
-func NewGroupG1() kyber.Group {
+func NewGroupG1(dst []byte) kyber.Group {
 	return &groupBls{
 		str:      "bls12-381.G1",
-		newPoint: func() kyber.Point { return NullKyberG1() },
+		newPoint: func() kyber.Point { return NullKyberG1(dst) },
 		isPrime:  true,
 	}
 }
 
-func NewGroupG2() kyber.Group {
+func NewGroupG2(dst []byte) kyber.Group {
 	return &groupBls{
 		str:      "bls12-381.G2",
-		newPoint: func() kyber.Point { return NullKyberG2() },
+		newPoint: func() kyber.Point { return NullKyberG2(dst) },
 		isPrime:  false,
 	}
 }
@@ -92,18 +92,29 @@ func NewGroupGT() kyber.Group {
 	}
 }
 
-type Suite struct{}
+type Suite struct {
+	domainG1 []byte
+	domainG2 []byte
+}
 
 func NewBLS12381Suite() pairing.Suite {
 	return &Suite{}
 }
 
+func (s *Suite) SetDomainG1(dst []byte) {
+	s.domainG1 = dst
+}
+
 func (s *Suite) G1() kyber.Group {
-	return NewGroupG1()
+	return NewGroupG1(s.domainG1)
+}
+
+func (s *Suite) SetDomainG2(dst []byte) {
+	s.domainG2 = dst
 }
 
 func (s *Suite) G2() kyber.Group {
-	return NewGroupG2()
+	return NewGroupG2(s.domainG2)
 }
 
 func (s *Suite) GT() kyber.Group {
@@ -117,7 +128,7 @@ func (s *Suite) ValidatePairing(p1, p2, p3, p4 kyber.Point) bool {
 	// in order to avoid risks of race conditions.
 	g1point := new(bls12381.PointG1).Set(p1.(*KyberG1).p)
 	g2point := new(bls12381.PointG2).Set(p2.(*KyberG2).p)
-	g1point2 := p3.(*KyberG1).p
+	g1point2 := new(bls12381.PointG1).Set(p3.(*KyberG1).p)
 	g2point2 := new(bls12381.PointG2).Set(p4.(*KyberG2).p)
 	e.AddPair(g1point, g2point)
 	e.AddPairInv(g1point2, g2point2)
@@ -151,7 +162,7 @@ func (s *Suite) Hash() hash.Hash {
 	return sha256.New()
 }
 
-// XOF returns a newlly instantiated blake2xb XOF function.
+// XOF returns a newly instantiated blake2xb XOF function.
 func (s *Suite) XOF(seed []byte) kyber.XOF {
 	return blake2xb.New(seed)
 }

@@ -2,8 +2,17 @@
     {
         "Msg": "",
         "Ciphersuite": "",
-        "G1Compressed": "iMfjiO5Y8duaJNcJiwHRNjQpi+vy0VklSXW9RQyw0of8xiLrce3ei0aahRNVG68f",
-        "G2Compressed": "tpMntJx8f85XL+S+CDcW+K1dHJhsRBIOgcnGwDb9RkhF/iTtOM/Ok9D0ZHcZ8bteAXh8hH3vRZLMVGVsAzKPLO9i2oUrbNYcy6FEfpTGqXJSeEh/KPPHGfJOKY6eCTqj",
+        "G1Compressed": "suDmYhgb2fjNjvJGBxNXzQeiPEOR6Hm0njIITcwaKu3hI8jov83pLtrCKeKLcZFC",
+        "G2Compressed": "qKqzA+M+0U9KkEAEqSvSb/yWnB0efUt/DAQVCnPhhFqRHlGistNp1c7wZWDFrJ9XFcAVZpk9RGmAXfPh8ptTZIGoMr8nUbaQj67Wd20GLVhVIYiSMpmdcrZ51uOLtc//",
+        "BLSPrivKey": "",
+        "BLSPubKey": null,
+        "BLSSigG2": null
+    },
+    {
+        "Msg": "",
+        "Ciphersuite": "BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_",
+        "G1Compressed": "suDmYhgb2fjNjvJGBxNXzQeiPEOR6Hm0njIITcwaKu3hI8jov83pLtrCKeKLcZFC",
+        "G2Compressed": "t8Ej55+N2eHVxM9vIK6UNyKnJ8alAlIFd1sHcJvWWy1t41cf/xggBL8V79kC0Y6oGAyyqOtMydO3QK9+kSyWGvi9etkTSKK1ZtvJB6WcS5nY+6NiVs2fSm3xwlI2WDfS",
         "BLSPrivKey": "",
         "BLSPubKey": null,
         "BLSSigG2": null
@@ -13,9 +22,18 @@
         "Ciphersuite": "BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_",
         "G1Compressed": "hMW6jNJQe93jbkaX0CfwuJUHmHHFh+7DY819un+7BfxKvHjAFQ9Glqr4jhBDqXPD",
         "G2Compressed": "qKqzA+M+0U9KkEAEqSvSb/yWnB0efUt/DAQVCnPhhFqRHlGistNp1c7wZWDFrJ9XFcAVZpk9RGmAXfPh8ptTZIGoMr8nUbaQj67Wd20GLVhVIYiSMpmdcrZ51uOLtc//",
-        "BLSPrivKey": "27539689655622540958679105641905086851274830069992722298279813327323206776590",
-        "BLSPubKey": "sr4R3I5U7nTbwHVp/XT+A7X1Ktcc1JqFebbGOHiR9aIK2YDsJ0dhjBua01hGpoo+",
-        "BLSSigG2": "tTz9+LSIoobfHtIEMuK7xOY2EAN1ff2jpP1s2Y3pXlUT98RI1wsmgeFFR6bO1H58EOKEMuiryzTeHcKPOTKP0qE9sSpMajC9F7DkKIGkKQA+TCRYO6DymkD9g2zwXhpA"
+        "BLSPrivKey": "47513352334474430269451736385780177621351802298989911096234326721557800710527",
+        "BLSPubKey": "hN6zagqRrc7xpA9reh09Bp9tf86945S7idxCpfz+nmiMjQbzNvK2OGzq3Z6eVS4q",
+        "BLSSigG2": "laAlM+Vub9FJC6I09lnkPsmYZLBqDfK0HNaXEoRu0uSGYO2g0SsLV3PbwX+nma+kAWAKfhWw5fHeOV+HNC4tcTVkE3dQmHJq4t4A7AWXRuUlSZjLkNUDIT4vZdfhYcFf"
+    },
+    {
+        "Msg": "1234",
+        "Ciphersuite": "BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_",
+        "G1Compressed": "sDSo0qRtu8ypPyznwH3+Pyh82WkwuDEWe6tpSiqCMpGRKYeKnzOkj4xXcEId+MNY",
+        "G2Compressed": "j6hZpRTryvO7mhDDXO+iwRplDeCLZMQirDMs1m90ql3kpPx8+LfLnoe3wIynP1LeFuLRbi6VqIr/g7x8BoT5tPRG4KPi1B8T78gYQ69IeZoLwYjd3SZz+JAheadBU9mq",
+        "BLSPrivKey": "",
+        "BLSPubKey": null,
+        "BLSSigG2": null
     },
     {
         "Msg": "1234",
