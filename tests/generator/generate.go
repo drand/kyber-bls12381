@@ -56,9 +56,9 @@ func main() {
 	tvs = fill(tvs)
 	for _, tv := range tvs {
 		Domain := []byte(tv.cipher)
-		g1 := bls.NullKyberG1(Domain).Hash([]byte(tv.msg))
+		g1 := bls.NullKyberG1(Domain...).Hash([]byte(tv.msg))
 		g1Buff, _ := g1.MarshalBinary()
-		g2 := bls.NullKyberG2(Domain).Hash([]byte(tv.msg))
+		g2 := bls.NullKyberG2(Domain...).Hash([]byte(tv.msg))
 		g2Buff, _ := g2.MarshalBinary()
 		s := toWrite{
 			Msg:          tv.msg,

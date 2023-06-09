@@ -267,11 +267,11 @@ func GroupTest(t *testing.T, g kyber.Group) {
 }
 
 func TestKyberG1(t *testing.T) {
-	GroupTest(t, NewGroupG1(nil))
+	GroupTest(t, NewGroupG1())
 }
 
 func TestKyberG2(t *testing.T) {
-	GroupTest(t, NewGroupG2(nil))
+	GroupTest(t, NewGroupG2())
 }
 
 func TestKyberPairingG2(t *testing.T) {

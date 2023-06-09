@@ -68,18 +68,18 @@ func (g *groupBls) RandomStream() cipher.Stream {
 	return random.New()
 }
 
-func NewGroupG1(dst []byte) kyber.Group {
+func NewGroupG1(dst ...byte) kyber.Group {
 	return &groupBls{
 		str:      "bls12-381.G1",
-		newPoint: func() kyber.Point { return NullKyberG1(dst) },
+		newPoint: func() kyber.Point { return NullKyberG1(dst...) },
 		isPrime:  true,
 	}
 }
 
-func NewGroupG2(dst []byte) kyber.Group {
+func NewGroupG2(dst ...byte) kyber.Group {
 	return &groupBls{
 		str:      "bls12-381.G2",
-		newPoint: func() kyber.Point { return NullKyberG2(dst) },
+		newPoint: func() kyber.Point { return NullKyberG2(dst...) },
 		isPrime:  false,
 	}
 }
@@ -114,7 +114,7 @@ func (s *Suite) SetDomainG1(dst []byte) {
 }
 
 func (s *Suite) G1() kyber.Group {
-	return NewGroupG1(s.domainG1)
+	return NewGroupG1(s.domainG1...)
 }
 
 func (s *Suite) SetDomainG2(dst []byte) {
@@ -122,7 +122,7 @@ func (s *Suite) SetDomainG2(dst []byte) {
 }
 
 func (s *Suite) G2() kyber.Group {
-	return NewGroupG2(s.domainG2)
+	return NewGroupG2(s.domainG2...)
 }
 
 func (s *Suite) GT() kyber.Group {

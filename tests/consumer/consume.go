@@ -33,14 +33,14 @@ func main() {
 		panic(err)
 	}
 	for i, tv := range tests {
-		g1 := bls.NullKyberG1([]byte(tv.Ciphersuite)).Hash([]byte(tv.Msg))
+		g1 := bls.NullKyberG1([]byte(tv.Ciphersuite)...).Hash([]byte(tv.Msg))
 		g1Buff, _ := g1.MarshalBinary()
 		exp := tv.G1Compressed
 		if !bytes.Equal(g1Buff, exp) {
 			retCount++
 			fmt.Println("test", i, " fails at G1")
 		}
-		g2 := bls.NullKyberG2([]byte(tv.Ciphersuite)).Hash([]byte(tv.Msg))
+		g2 := bls.NullKyberG2([]byte(tv.Ciphersuite)...).Hash([]byte(tv.Msg))
 		g2Buff, _ := g2.MarshalBinary()
 		exp = tv.G2Compressed
 		if !bytes.Equal(g2Buff, exp) {

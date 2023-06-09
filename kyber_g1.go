@@ -28,7 +28,7 @@ type KyberG1 struct {
 	kyber.HashablePoint
 }
 
-func NullKyberG1(dst []byte) *KyberG1 {
+func NullKyberG1(dst ...byte) *KyberG1 {
 	var p bls12381.PointG1
 	return newKyberG1(&p, dst)
 }
@@ -103,7 +103,7 @@ func (k *KyberG1) Neg(a kyber.Point) kyber.Point {
 
 func (k *KyberG1) Mul(s kyber.Scalar, q kyber.Point) kyber.Point {
 	if q == nil {
-		q = NullKyberG1(k.dst).Base()
+		q = NullKyberG1(k.dst...).Base()
 	}
 	bls12381.NewG1().MulScalarBig(k.p, q.(*KyberG1).p, &s.(*mod.Int).V)
 	return k
