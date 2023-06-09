@@ -398,7 +398,6 @@ func Pair(a, b kyber.Point) kyber.Point {
 	return suite.Pair(a, b)
 }
 func TestBasicPairing(t *testing.T) {
-
 	// we test a * b = c + d
 	a := NewElement().Pick(random.New())
 	b := NewElement().Pick(random.New())
@@ -508,4 +507,28 @@ func TestImplementInterfaces(t *testing.T) {
 	// var _ kyber.HashablePoint = &KyberGT{} // GT is not hashable for now
 	var _ kyber.Group = &groupBls{}
 	var _ pairing.Suite = &Suite{}
+}
+
+func TestSuiteWithDST(t *testing.T) {
+	pk := "a0b862a7527fee3a731bcb59280ab6abd62d5c0b6ea03dc4ddf6612fdfc9d01f01c31542541771903475eb1ec6615f8d0df0b8b6dce385811d6dcf8cbefb8759e5e616a3dfd054c928940766d9a5b9db91e3b697e5d70a975181e007f87fca5e"
+	sig := "9544ddce2fdbe8688d6f5b4f98eed5d63eee3902e7e162050ac0f45905a55657714880adabe3c3096b92767d886567d0"
+	round := uint64(1)
+	// using DomainG2 for G1
+	suite := NewBLS12381SuiteWithDST(DefaultDomainG2(), DefaultDomainG2())
+
+	pkb, _ := hex.DecodeString(pk)
+	pubkeyP := suite.G2().Point()
+	pubkeyP.UnmarshalBinary(pkb)
+	sigb, _ := hex.DecodeString(sig)
+	sigP := suite.G1().Point()
+	sigP.UnmarshalBinary(sigb)
+	h := sha256.New()
+	_ = binary.Write(h, binary.BigEndian, round)
+	msg := h.Sum(nil)
+
+	base := suite.G2().Point().Base().Clone()
+	MsgP := suite.G1().Point().(kyber.HashablePoint).Hash(msg)
+	if !suite.ValidatePairing(MsgP, pubkeyP, sigP, base) {
+		t.Fatalf("Error validating pairing")
+	}
 }

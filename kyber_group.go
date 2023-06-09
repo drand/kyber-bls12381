@@ -97,8 +97,16 @@ type Suite struct {
 	domainG2 []byte
 }
 
+// NewBLS12381Suite is the same as calling NewBLS12381SuiteWithDST(nil, nil): it uses the default domain separation
+// tags for its Hash To Curve functions.
 func NewBLS12381Suite() pairing.Suite {
 	return &Suite{}
+}
+
+// NewBLS12381SuiteWithDST allows you to set your own domain separation tags to be used by the Hash To Curve functions.
+// Since the DST shouldn't be 0 len, if you provide nil or a 0 len byte array, it will use the RFC default values.
+func NewBLS12381SuiteWithDST(DomainG1, DomainG2 []byte) pairing.Suite {
+	return &Suite{domainG1: DomainG1, domainG2: DomainG2}
 }
 
 func (s *Suite) SetDomainG1(dst []byte) {
