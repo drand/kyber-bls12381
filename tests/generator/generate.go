@@ -39,19 +39,26 @@ func main() {
 		},
 		{
 			msg:    "",
-			cipher: string(bls.Domain),
+			cipher: string(bls.DefaultDomainG1()),
+		},
+		{
+			msg:    "",
+			cipher: string(bls.DefaultDomainG2()),
 		},
 		{
 			msg:    "1234",
-			cipher: string(bls.Domain),
+			cipher: string(bls.DefaultDomainG1()),
+		}, {
+			msg:    "1234",
+			cipher: string(bls.DefaultDomainG2()),
 		},
 	}
 	tvs = fill(tvs)
 	for _, tv := range tvs {
-		bls.Domain = []byte(tv.cipher)
-		g1 := bls.NullKyberG1().Hash([]byte(tv.msg))
+		Domain := []byte(tv.cipher)
+		g1 := bls.NullKyberG1(Domain...).Hash([]byte(tv.msg))
 		g1Buff, _ := g1.MarshalBinary()
-		g2 := bls.NullKyberG2().Hash([]byte(tv.msg))
+		g2 := bls.NullKyberG2(Domain...).Hash([]byte(tv.msg))
 		g2Buff, _ := g2.MarshalBinary()
 		s := toWrite{
 			Msg:          tv.msg,
@@ -60,8 +67,8 @@ func main() {
 			G2Compressed: g2Buff,
 		}
 
-		if bytes.Equal([]byte(tv.cipher), bls.Domain) {
-			// SIGNATURE is always happening on bls.Domain
+		if bytes.Equal([]byte(tv.cipher), bls.DefaultDomainG2()) {
+			// SIGNATURE is always happening on bls.DomainG2
 			pairing := bls.NewBLS12381Suite()
 			scheme := sig.NewSchemeOnG2(pairing)
 			priv, pub := scheme.NewKeyPair(random.New())
@@ -92,18 +99,18 @@ func main() {
 func fill(tvs []testVector) []testVector {
 	tvs = append(tvs, testVector{
 		msg:    randomString(32),
-		cipher: string(bls.Domain),
+		cipher: string(bls.DefaultDomainG2()),
 	})
 	tvs = append(tvs, testVector{
 		msg:    randomString(64),
-		cipher: string(bls.Domain),
+		cipher: string(bls.DefaultDomainG2()),
 	})
 	for i := 0; i < 100; i++ {
 		msgLen := mrand.Intn(2000)
 		msg := randomString(msgLen)
 		tvs = append(tvs, testVector{
 			msg:    msg,
-			cipher: string(bls.Domain),
+			cipher: string(bls.DefaultDomainG2()),
 		})
 	}
 	return tvs

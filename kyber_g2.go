@@ -1,8 +1,8 @@
 package bls
 
 import (
+	"bytes"
 	"crypto/cipher"
-	"crypto/sha256"
 	"encoding/hex"
 	"io"
 
@@ -11,34 +11,44 @@ import (
 	bls12381 "github.com/kilic/bls12-381"
 )
 
-// Domain comes from the ciphersuite used by the RFC of this name compatible
-// with the paired library > v18
-var Domain = []byte("BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_")
+// domainG2 is the DST used for hash to curve on G2, this is the default from the RFC.
+// This is compatible with the paired library > v18
+var domainG2 = []byte("BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_")
+
+func DefaultDomainG2() []byte {
+	return domainG2
+}
 
 // KyberG2 is a kyber.Point holding a G2 point on BLS12-381 curve
 type KyberG2 struct {
 	p *bls12381.PointG2
+	// domain separation tag. We treat a 0 len dst as the default value as per the RFC "Tags MUST have nonzero length"
+	dst []byte
 }
 
-func NullKyberG2() *KyberG2 {
+func NullKyberG2(dst ...byte) *KyberG2 {
 	var p bls12381.PointG2
-	return newKyberG2(&p)
+	return newKyberG2(&p, dst)
 }
 
-func newKyberG2(p *bls12381.PointG2) *KyberG2 {
-	return &KyberG2{p: p}
+func newKyberG2(p *bls12381.PointG2, dst []byte) *KyberG2 {
+	return &KyberG2{p: p, dst: dst}
 }
 
 func (k *KyberG2) Equal(k2 kyber.Point) bool {
-	return bls12381.NewG2().Equal(k.p, k2.(*KyberG2).p)
+	k2g2, ok := k2.(*KyberG2)
+	if !ok {
+		return false
+	}
+	return bls12381.NewG2().Equal(k.p, k2g2.p) && bytes.Equal(k.dst, k2g2.dst)
 }
 
 func (k *KyberG2) Null() kyber.Point {
-	return newKyberG2(bls12381.NewG2().Zero())
+	return newKyberG2(bls12381.NewG2().Zero(), k.dst)
 }
 
 func (k *KyberG2) Base() kyber.Point {
-	return newKyberG2(bls12381.NewG2().One())
+	return newKyberG2(bls12381.NewG2().One(), k.dst)
 }
 
 func (k *KyberG2) Pick(rand cipher.Stream) kyber.Point {
@@ -55,7 +65,7 @@ func (k *KyberG2) Set(q kyber.Point) kyber.Point {
 func (k *KyberG2) Clone() kyber.Point {
 	var p bls12381.PointG2
 	p.Set(k.p)
-	return newKyberG2(&p)
+	return newKyberG2(&p, k.dst)
 }
 
 func (k *KyberG2) EmbedLen() int {
@@ -92,12 +102,13 @@ func (k *KyberG2) Neg(a kyber.Point) kyber.Point {
 
 func (k *KyberG2) Mul(s kyber.Scalar, q kyber.Point) kyber.Point {
 	if q == nil {
-		q = NullKyberG2().Base()
+		q = NullKyberG2(k.dst...).Base()
 	}
 	bls12381.NewG2().MulScalarBig(k.p, q.(*KyberG2).p, &s.(*mod.Int).V)
 	return k
 }
 
+// MarshalBinary returns a compressed point, without any domain separation tag information
 func (k *KyberG2) MarshalBinary() ([]byte, error) {
 	// we need to clone the point because of https://github.com/kilic/bls12-381/issues/37
 	// in order to avoid risks of race conditions.
@@ -105,12 +116,14 @@ func (k *KyberG2) MarshalBinary() ([]byte, error) {
 	return bls12381.NewG2().ToCompressed(t), nil
 }
 
+// UnmarshalBinary populates the point from a compressed point representation.
 func (k *KyberG2) UnmarshalBinary(buff []byte) error {
 	var err error
 	k.p, err = bls12381.NewG2().FromCompressed(buff)
 	return err
 }
 
+// MarshalTo writes a compressed point to the Writer, without any domain separation tag information
 func (k *KyberG2) MarshalTo(w io.Writer) (int, error) {
 	buf, err := k.MarshalBinary()
 	if err != nil {
@@ -119,6 +132,7 @@ func (k *KyberG2) MarshalTo(w io.Writer) (int, error) {
 	return w.Write(buf)
 }
 
+// UnmarshalFrom populates the point from a compressed point representation read from the Reader.
 func (k *KyberG2) UnmarshalFrom(r io.Reader) (int, error) {
 	buf := make([]byte, k.MarshalSize())
 	n, err := io.ReadFull(r, buf)
@@ -138,15 +152,14 @@ func (k *KyberG2) String() string {
 }
 
 func (k *KyberG2) Hash(m []byte) kyber.Point {
-	pg2, _ := bls12381.NewG2().HashToCurve(m, Domain)
+	domain := domainG2
+	// We treat a 0 len dst as the default value as per the RFC "Tags MUST have nonzero length"
+	if len(k.dst) != 0 {
+		domain = k.dst
+	}
+	pg2, _ := bls12381.NewG2().HashToCurve(m, domain)
 	k.p = pg2
 	return k
-}
-
-func sha256Hash(in []byte) []byte {
-	h := sha256.New()
-	h.Write(in)
-	return h.Sum(nil)
 }
 
 func (k *KyberG2) IsInCorrectGroup() bool {
