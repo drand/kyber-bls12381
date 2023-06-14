@@ -514,7 +514,7 @@ func TestSuiteWithDST(t *testing.T) {
 	sig := "9544ddce2fdbe8688d6f5b4f98eed5d63eee3902e7e162050ac0f45905a55657714880adabe3c3096b92767d886567d0"
 	round := uint64(1)
 	// using DomainG2 for G1
-	suite := NewBLS12381SuiteWithDST(DefaultDomainG2(), DefaultDomainG2())
+	suite := NewBLS12381SuiteWithDST(DefaultDomainG2(), nil)
 
 	pkb, _ := hex.DecodeString(pk)
 	pubkeyP := suite.G2().Point()
@@ -530,5 +530,35 @@ func TestSuiteWithDST(t *testing.T) {
 	MsgP := suite.G1().Point().(kyber.HashablePoint).Hash(msg)
 	if !suite.ValidatePairing(MsgP, pubkeyP, sigP, base) {
 		t.Fatalf("Error validating pairing")
+	}
+}
+
+func TestExplicitDefaultDST(t *testing.T) {
+	g1d1 := NullKyberG1([]byte("BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_")...)
+	g2d1 := NullKyberG2([]byte("BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_")...)
+	g1d2 := NullKyberG1([]byte("BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_")...)
+	g2d2 := NullKyberG2([]byte("BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_")...)
+
+	if g1d1.dst != nil {
+		t.Fatal("Default G1 DST should be represented internally as nil. Got:", string(g1d1.dst))
+	}
+	if g2d2.dst != nil {
+		t.Fatal("Default G2 DST should be represented internally as nil. Got:", string(g2d2.dst))
+	}
+	if !bytes.Equal(g1d2.dst, domainG2) {
+		t.Fatal("Non-default G1 DST should not be nil. Got:", string(g1d2.dst))
+	}
+	if !bytes.Equal(g2d1.dst, domainG1) {
+		t.Fatal("Non-default G2 DST should not be nil. Got:", string(g2d1.dst))
+	}
+	
+	suite := NewBLS12381SuiteWithDST(DefaultDomainG2(), DefaultDomainG2())
+	sg1 := suite.G1().Point()
+	sg2 := suite.G2().Point()
+	if p, ok := sg1.(*KyberG1); !ok || !bytes.Equal(p.dst, domainG2) {
+		t.Fatal("Non-default G1 DST should not be nil. Got:", string(p.dst))
+	}
+	if p, ok := sg2.(*KyberG2); !ok || p.dst != nil {
+		t.Fatal("Default G2 DST should be represented internally as nil. Got:", string(p.dst))
 	}
 }
