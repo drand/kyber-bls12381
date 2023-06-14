@@ -32,7 +32,11 @@ func NullKyberG2(dst ...byte) *KyberG2 {
 }
 
 func newKyberG2(p *bls12381.PointG2, dst []byte) *KyberG2 {
-	return &KyberG2{p: p, dst: dst}
+	domain := dst
+	if bytes.Equal(dst, domainG2) {
+		domain = nil
+	}
+	return &KyberG2{p: p, dst: domain}
 }
 
 func (k *KyberG2) Equal(k2 kyber.Point) bool {
